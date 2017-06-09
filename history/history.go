@@ -16,12 +16,14 @@ type Hist struct {
 }
 
 // Init initializes history slice and reads .gosh_history file
-func Init(hSize int, hFileSize int, hFileName string) []*Hist {
+func Init(/*hSize int, hFileSize int,*/hFileName string) []*Hist {
 
 	var entry string
 	var split []string
 
-	histSlice := make([]*Hist, hSize, hFileSize)
+	// histSlice := make([]*Hist, hSize, hFileSize)
+
+	histSlice := []*Hist{}
 
 	hFile, err := os.Open(hFileName)
 
@@ -45,7 +47,7 @@ func Init(hSize int, hFileSize int, hFileName string) []*Hist {
 		hEntry.LineNumber = split[0]
 		hEntry.Data = split[1:]
 
-		// place into slace
+		// place into slice
 		histSlice = append(histSlice, hEntry)
 
 	}
