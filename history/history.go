@@ -32,21 +32,22 @@ func Init(hSize int, hFileSize int, hFileName string) []*Hist {
 	defer hFile.Close()
 
 	scanner := bufio.NewScanner(hFile)
+	index := 0
 	for scanner.Scan() {
 		entry = scanner.Text()
 		split = strings.Fields(entry)
-
-		// debug output
-		fmt.Println(split[0])
-		fmt.Println(split[1:])
 
 		// construct struct
 		hEntry := new(Hist)
 		hEntry.LineNumber = split[0]
 		hEntry.Data = split[1:]
 
-		// place into slace
-		histSlice = append(histSlice, hEntry)
+		// place into slice
+		// append is the wrong thing to use here
+		// the function append grows the underlying array beyond
+		// it's capacity
+		histSlice[index] = hEntry
+		index++
 
 	}
 
