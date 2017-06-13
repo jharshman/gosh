@@ -2,6 +2,7 @@ package history
 
 import (
 	"bufio"
+	"container/list"
 	"fmt"
 	"github.com/jharshman/gosh/xerrors"
 	"os"
@@ -15,15 +16,15 @@ type Hist struct {
 	// TimeStamp  string
 }
 
+const histFile string = ".gosh_history"
+
 // Init initializes history slice and reads .gosh_history file
-func Init(hSize int, hFileSize int, hFileName string) []*Hist {
+func Init(hSize int, hFileSize int) []*Hist {
 
 	var entry string
-	var split []string
+	var splitEntry []string
 
-	histSlice := make([]*Hist, hSize, hFileSize)
-
-	hFile, err := os.Open(hFileName)
+	hFile, err := os.Open(histFile)
 
 	if err != nil {
 		fmt.Println(xerrors.ErrInternal)
@@ -32,25 +33,15 @@ func Init(hSize int, hFileSize int, hFileName string) []*Hist {
 	defer hFile.Close()
 
 	scanner := bufio.NewScanner(hFile)
-	index := 0
 	for scanner.Scan() {
 		entry = scanner.Text()
-		split = strings.Fields(entry)
+		splitEntry = strings.Fields(entry)
 
 		// construct struct
 		hEntry := new(Hist)
-		hEntry.LineNumber = split[0]
-		hEntry.Data = split[1:]
-
-		// place into slice
-		// append is the wrong thing to use here
-		// the function append grows the underlying array beyond
-		// it's capacity
-		histSlice[index] = hEntry
-		index++
+		hEntry.LineNumber = splitEntry[0]
+		hEntry.Data = splitEntry[1:]
 
 	}
-
-	return histSlice
 
 }
