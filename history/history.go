@@ -13,13 +13,14 @@ import (
 type Hist struct {
 	LineNumber string
 	Data       []string
-	// TimeStamp  string
+	TimeStamp  string
+	Context    string
 }
 
 const histFile string = ".gosh_history"
 
 // Init initializes history slice and reads .gosh_history file
-func Init(hSize int, hFileSize int) []*Hist {
+func Init(hList **list.List) {
 
 	var entry string
 	var splitEntry []string
@@ -41,6 +42,8 @@ func Init(hSize int, hFileSize int) []*Hist {
 		hEntry := new(Hist)
 		hEntry.LineNumber = splitEntry[0]
 		hEntry.Data = splitEntry[1:]
+
+		_ = (*hList).PushBack(hEntry)
 
 	}
 

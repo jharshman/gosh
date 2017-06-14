@@ -20,7 +20,7 @@ func main() {
 
 	// read .goshrc file
 	var conf config.Rc
-	conf = config.Init(rcFile)
+	conf = config.Init()
 
 	// history use container/list instead of array / slice
 	hList := list.New()
