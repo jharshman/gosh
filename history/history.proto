@@ -1,0 +1,13 @@
+syntax = "proto3";
+package history;
+
+message HistoryEntry {
+  int32 lineNumber = 2;
+  string data = 3;
+  string timestamp = 4;
+  string context = 5;
+}
+
+message HistoryLog { 
+  repeated HistoryEntry history = 1;
+}

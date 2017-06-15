@@ -22,6 +22,10 @@ func main() {
 	var conf config.Rc
 	conf = config.Init()
 
+	// debug print
+	fmt.Println(conf.History)
+	fmt.Println(conf.HistoryFileSize)
+
 	// history use container/list instead of array / slice
 	hList := list.New()
 	history.Init(&hList)
