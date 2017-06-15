@@ -25,13 +25,14 @@ func Init(hList **list.List) {
 	var entry string
 	var splitEntry []string
 
-	hFile, err := os.Open(histFile)
-
-	if err != nil {
-		fmt.Println(xerrors.ErrInternal)
-		// log error
+	if _, err := os.Stat(histFile); err == nil {
+		hFile, err = os.Open(histFile)
+		defer hFile.Close()
+		if err != nil {
+			fmt.Println(xerrors.ErrInternal)
+			// log error
+		}
 	}
-	defer hFile.Close()
 
 	scanner := bufio.NewScanner(hFile)
 	for scanner.Scan() {
