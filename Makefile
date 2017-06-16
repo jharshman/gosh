@@ -2,7 +2,7 @@
 # GoSH Makefile
 #
 
-.PHONY: all check-path get-deps lint test
+.PHONY: all check-path get-deps lint test proto
 
 all: check-path get-deps test
 
@@ -28,3 +28,10 @@ get-deps: check-path
 lint: get-deps
 	@echo "[*] linting..."
 	golint ./...
+
+proto:
+	@echo "[*] protoc... "
+	while read file; do 																\
+		echo "[*] compiling ${file}"; 										\
+		protoc -I=${file%\/*} --go_out=${file%\/*} $file; \
+	done < <(find . -name "*.proto");

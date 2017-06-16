@@ -1,2 +1,2 @@
-history = 1000
-historyfilesize = 2000
+history = 5
+historyfilesize = 10
