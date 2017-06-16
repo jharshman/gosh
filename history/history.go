@@ -19,33 +19,38 @@ type Hist struct {
 
 const histFile string = ".gosh_history"
 
-// Init initializes history slice and reads .gosh_history file
+// Init initializes history and reads .gosh_history file
+// if .gosh_history doesn't exist, nothing happens and the list
+// remains empty.
+// .gosh_history will be written / appended to later
 func Init(hList **list.List) {
 
 	var entry string
 	var splitEntry []string
+	var hFile *os.File
 
 	if _, err := os.Stat(histFile); err == nil {
 		hFile, err = os.Open(histFile)
-		defer hFile.Close()
 		if err != nil {
 			fmt.Println(xerrors.ErrInternal)
 			// log error
 		}
+		defer hFile.Close()
+
+		scanner := bufio.NewScanner(hFile)
+		for scanner.Scan() {
+			entry = scanner.Text()
+			splitEntry = strings.Fields(entry)
+
+			// construct struct
+			hEntry := new(Hist)
+			hEntry.LineNumber = splitEntry[0]
+			hEntry.TimeStamp = splitEntry[1]
+			hEntry.Context = splitEntry[2]
+			hEntry.Data = splitEntry[3:]
+
+			_ = (*hList).PushBack(hEntry)
+
+		}
 	}
-
-	scanner := bufio.NewScanner(hFile)
-	for scanner.Scan() {
-		entry = scanner.Text()
-		splitEntry = strings.Fields(entry)
-
-		// construct struct
-		hEntry := new(Hist)
-		hEntry.LineNumber = splitEntry[0]
-		hEntry.Data = splitEntry[1:]
-
-		_ = (*hList).PushBack(hEntry)
-
-	}
-
 }

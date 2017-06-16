@@ -30,4 +30,9 @@ func main() {
 	hList := list.New()
 	history.Init(&hList)
 
+	// debug print history
+	for e := hList.Front(); e.Next() != nil; e = e.Next() {
+		fmt.Println(e.Value)
+	}
+
 }
