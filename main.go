@@ -35,4 +35,6 @@ func main() {
 		fmt.Println(e.Value)
 	}
 
+	history.WriteHistory(&hList)
+
 }

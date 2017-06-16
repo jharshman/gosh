@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"github.com/jharshman/gosh/xerrors"
+	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -69,16 +70,35 @@ func Init(hList **list.List) {
 func WriteHistory(hList **list.List) {
 
 	// write history file
-
+	var entryList []*HistoryEntry
+	entryList = make([]*HistoryEntry, (*hList).Len()-1)
+	index := 0
 	for e := (*hList).Front(); e.Next() != nil; e = e.Next() {
 
 		// create an entry
-		entry := &HistoryEntry{
+		temp := &HistoryEntry{
 			LineNumber: e.Value.(*Hist).LineNumber,
 			Data:       e.Value.(*Hist).Data,
 			TimeStamp:  e.Value.(*Hist).TimeStamp,
 			Context:    e.Value.(*Hist).Context,
 		}
+		entryList[index] = temp
+		index++
+	}
 
+	entries := &HistoryLog{
+		History: entryList,
+	}
+
+	out, err := proto.Marshal(entries)
+	if err != nil {
+		fmt.Println(xerrors.ErrInternal)
+		fmt.Println(err)
+		// log error
+	}
+
+	if err := ioutil.WriteFile("testfile", out, 0644); err != nil {
+		fmt.Println(xerrors.ErrInternal)
+		// log error
 	}
 }
