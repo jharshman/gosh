@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"container/list"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"github.com/jharshman/gosh/xerrors"
 	"os"
 	"strings"
@@ -52,5 +53,22 @@ func Init(hList **list.List) {
 			_ = (*hList).PushBack(hEntry)
 
 		}
+	}
+}
+
+func WriteHistory(hList **list.List) {
+
+	// write history file
+
+	for e := (*hList).Front(); e.Next() != nil; e = e.Next() {
+
+		// create an entry
+		entry := &HistoryEntry{
+			LineNumber: e.Value.(*Hist).LineNumber,
+			Data:       e.Value.(*Hist).Data,
+			TimeStamp:  e.Value.(*Hist).TimeStamp,
+			Context:    e.Value.(*Hist).Context,
+		}
+
 	}
 }

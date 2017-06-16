@@ -4,7 +4,7 @@ package history;
 message HistoryEntry {
   int32 lineNumber = 2;
   string data = 3;
-  string timestamp = 4;
+  string timeStamp = 4;
   string context = 5;
 }
 
