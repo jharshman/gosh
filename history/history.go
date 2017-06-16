@@ -7,14 +7,15 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/jharshman/gosh/xerrors"
 	"os"
+	"strconv"
 	"strings"
 )
 
 // Hist struct similar to GNU History Library
 type Hist struct {
-	LineNumber string
-	Data       []string
+	LineNumber int32
 	TimeStamp  string
+	Data       string
 	Context    string
 }
 
@@ -44,11 +45,20 @@ func Init(hList **list.List) {
 			splitEntry = strings.Fields(entry)
 
 			// construct struct
+			lineNumber, err := strconv.ParseUint(splitEntry[0], 10, 32)
+			if err != nil {
+				fmt.Println(xerrors.ErrInternal)
+				// log error
+			}
+
+			lineNumber32 := int32(lineNumber)
+			data := strings.Join(splitEntry[3:], " ")
+
 			hEntry := new(Hist)
-			hEntry.LineNumber = splitEntry[0]
+			hEntry.LineNumber = lineNumber32
 			hEntry.TimeStamp = splitEntry[1]
 			hEntry.Context = splitEntry[2]
-			hEntry.Data = splitEntry[3:]
+			hEntry.Data = data
 
 			_ = (*hList).PushBack(hEntry)
 
