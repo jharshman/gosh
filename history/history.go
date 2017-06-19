@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"github.com/jharshman/gosh/xerrors"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -14,10 +15,10 @@ import (
 
 // Hist struct similar to GNU History Library
 type Hist struct {
-	LineNumber int32
-	TimeStamp  string
-	Data       string
-	Context    string
+	lineNumber int32
+	timeStamp  string
+	data       string
+	context    string
 }
 
 const histFile string = ".gosh_history"
@@ -36,7 +37,7 @@ func Init(hList **list.List) {
 		hFile, err = os.Open(histFile)
 		if err != nil {
 			fmt.Println(xerrors.ErrInternal)
-			// log error
+			logrus.Fatalf("Failed reading file: %v", err)
 		}
 		defer hFile.Close()
 
@@ -46,20 +47,20 @@ func Init(hList **list.List) {
 			splitEntry = strings.Fields(entry)
 
 			// construct struct
-			lineNumber, err := strconv.ParseUint(splitEntry[0], 10, 32)
+			num, err := strconv.ParseUint(splitEntry[0], 10, 32)
 			if err != nil {
 				fmt.Println(xerrors.ErrInternal)
-				// log error
+				logrus.Fatalf("Failed parsing int: %v", err)
 			}
 
-			lineNumber32 := int32(lineNumber)
+			num32 := int32(num)
 			data := strings.Join(splitEntry[3:], " ")
 
-			hEntry := new(Hist)
-			hEntry.LineNumber = lineNumber32
-			hEntry.TimeStamp = splitEntry[1]
-			hEntry.Context = splitEntry[2]
-			hEntry.Data = data
+			hEntry := &Hist{}
+			hEntry.setLineNumber(num32)
+			hEntry.setTimeStamp(splitEntry[1])
+			hEntry.setContext(splitEntry[2])
+			hEntry.setData(data)
 
 			_ = (*hList).PushBack(hEntry)
 
@@ -67,6 +68,7 @@ func Init(hList **list.List) {
 	}
 }
 
+// demo function
 func WriteHistory(hList **list.List) {
 
 	// write history file
@@ -77,10 +79,10 @@ func WriteHistory(hList **list.List) {
 
 		// create an entry
 		temp := &HistoryEntry{
-			LineNumber: e.Value.(*Hist).LineNumber,
-			Data:       e.Value.(*Hist).Data,
-			TimeStamp:  e.Value.(*Hist).TimeStamp,
-			Context:    e.Value.(*Hist).Context,
+			LineNumber: e.Value.(*Hist).GetLineNumber(),
+			Data:       e.Value.(*Hist).GetData(),
+			TimeStamp:  e.Value.(*Hist).GetTimeStamp(),
+			Context:    e.Value.(*Hist).GetContext(),
 		}
 		entryList[index] = temp
 		index++
@@ -94,11 +96,50 @@ func WriteHistory(hList **list.List) {
 	if err != nil {
 		fmt.Println(xerrors.ErrInternal)
 		fmt.Println(err)
-		// log error
+		logrus.Fatalf("Failed marshalling data: %v", err)
 	}
 
 	if err := ioutil.WriteFile("testfile", out, 0644); err != nil {
 		fmt.Println(xerrors.ErrInternal)
-		// log error
+		logrus.Fatalf("Failed writting file: %v", err)
 	}
+}
+
+/*
+*	accessor functions
+ */
+func (h *Hist) setLineNumber(pLineNumber int32) {
+	h.lineNumber = pLineNumber
+}
+
+func (h *Hist) setTimeStamp(pTimeStamp string) {
+	h.timeStamp = pTimeStamp
+}
+
+func (h *Hist) setData(pData string) {
+	h.data = pData
+}
+
+func (h *Hist) setContext(pContext string) {
+	h.context = pContext
+}
+
+// GetLineNumber ...
+func (h *Hist) GetLineNumber() int32 {
+	return h.lineNumber
+}
+
+// GetTimeStamp ...
+func (h *Hist) GetTimeStamp() string {
+	return h.timeStamp
+}
+
+// GetData ...
+func (h *Hist) GetData() string {
+	return h.data
+}
+
+// GetContext ...
+func (h *Hist) GetContext() string {
+	return h.context
 }

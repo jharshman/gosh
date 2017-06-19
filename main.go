@@ -23,7 +23,7 @@ func main() {
 	conf = config.Init()
 
 	// debug print
-	fmt.Println(conf.History)
+	fmt.Println(conf.HistorySize)
 	fmt.Println(conf.HistoryFileSize)
 
 	// history use container/list instead of array / slice
