@@ -38,16 +38,18 @@ func main() {
 	}
 
 	// proof of concept write for protobuf
-	history.WriteHistory(&hList)
+	// history.WriteHistory(&hList)
 
 	// main loop
 	consoleReader := bufio.NewReader(os.Stdin)
 	for {
 		fmt.Print("gosh> ")
 		consoleInput, _ := consoleReader.ReadString('\n')
-		println("you wrote " + consoleInput)
+		trimmedInput := strings.TrimSpace(consoleInput)
 
-		if strings.Compare(consoleInput, "exit\n") == 0 {
+		// process input
+
+		if strings.Compare(trimmedInput, "exit") == 0 {
 			break
 		}
 
