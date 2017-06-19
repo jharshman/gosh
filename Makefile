@@ -12,12 +12,12 @@ ifndef GOPATH
 	@echo "[!] FATAL: GOPATH not defined"
 	@echo "Fix your Go Installation and try again"
 	@echo "For more information: https://golang.org/doc/install"
-	@echo "exit 1"
+	exit 1
 endif
 ifneq ($(subst ~,$(HOME),$(GOPATH))/src/github.com/jharshman/gosh, $(PWD))
 	@echo "[!] FATAL: source not in GOPATH"
 	@echo "go get github.com/jharshman/gosh"
-	@echo "exit 1"
+	exit 1
 endif
 	@echo "all good - exit 0"
 

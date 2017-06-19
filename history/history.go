@@ -68,7 +68,7 @@ func Init(hList **list.List) {
 	}
 }
 
-// demo function
+// WriteHistory ...
 func WriteHistory(hList **list.List) {
 
 	// write history file

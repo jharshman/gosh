@@ -10,8 +10,8 @@ import (
 
 // Rc defines the settable variables in .goshrc
 type Rc struct {
-	HistorySize     int
-	HistoryFileSize int
+	HistorySize     int32
+	HistoryFileSize int32
 }
 
 const rcFile string = ".goshrc"
