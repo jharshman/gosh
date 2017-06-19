@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"container/list"
 	"fmt"
 	"github.com/jharshman/gosh/config"
 	"github.com/jharshman/gosh/history"
+	"os"
+	"strings"
 )
 
 /*
@@ -19,11 +22,10 @@ import (
 func main() {
 
 	// read .goshrc file
-	var conf config.Rc
-	conf = config.Init()
+	conf := config.Init()
 
 	// debug print
-	fmt.Println(conf.History)
+	fmt.Println(conf.HistorySize)
 	fmt.Println(conf.HistoryFileSize)
 
 	// history use container/list instead of array / slice
@@ -35,6 +37,22 @@ func main() {
 		fmt.Println(e.Value)
 	}
 
-	history.WriteHistory(&hList)
+	// proof of concept write for protobuf
+	// history.WriteHistory(&hList)
+
+	// main loop
+	consoleReader := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Print("gosh> ")
+		consoleInput, _ := consoleReader.ReadString('\n')
+		trimmedInput := strings.TrimSpace(consoleInput)
+
+		// process input
+
+		if strings.Compare(trimmedInput, "exit") == 0 {
+			break
+		}
+
+	}
 
 }
