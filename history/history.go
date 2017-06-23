@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"github.com/jharshman/gosh/xerrors"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -37,7 +37,7 @@ func Init(hList **list.List) {
 		hFile, err = os.Open(histFile)
 		if err != nil {
 			fmt.Println(xerrors.ErrInternal)
-			logrus.Fatalf("Failed reading file: %v", err)
+			log.Fatalf("Failed reading file: %v", err)
 		}
 		defer hFile.Close()
 
@@ -50,7 +50,7 @@ func Init(hList **list.List) {
 			num, err := strconv.ParseUint(splitEntry[0], 10, 32)
 			if err != nil {
 				fmt.Println(xerrors.ErrInternal)
-				logrus.Fatalf("Failed parsing int: %v", err)
+				log.Fatalf("Failed parsing int: %v", err)
 			}
 
 			num32 := int32(num)
@@ -96,12 +96,12 @@ func WriteHistory(hList **list.List) {
 	if err != nil {
 		fmt.Println(xerrors.ErrInternal)
 		fmt.Println(err)
-		logrus.Fatalf("Failed marshalling data: %v", err)
+		log.Fatalf("Failed marshalling data: %v", err)
 	}
 
 	if err := ioutil.WriteFile("testfile", out, 0644); err != nil {
 		fmt.Println(xerrors.ErrInternal)
-		logrus.Fatalf("Failed writting file: %v", err)
+		log.Fatalf("Failed writting file: %v", err)
 	}
 }
 

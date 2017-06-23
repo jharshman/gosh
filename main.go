@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"container/list"
 	"fmt"
+	"github.com/jharshman/gosh/cmd"
 	"github.com/jharshman/gosh/config"
 	"github.com/jharshman/gosh/history"
 	"os"
@@ -33,15 +34,16 @@ func main() {
 	history.Init(&hList)
 
 	// debug print history
-	for e := hList.Front(); e.Next() != nil; e = e.Next() {
-		fmt.Println(e.Value)
-	}
+	//for e := hList.Front(); e.Next() != nil; e = e.Next() {
+	//	fmt.Println(e.Value)
+	//}
 
 	// proof of concept write for protobuf
 	// history.WriteHistory(&hList)
 
 	// main loop
 	consoleReader := bufio.NewReader(os.Stdin)
+
 	for {
 		fmt.Print("gosh> ")
 		consoleInput, _ := consoleReader.ReadString('\n')
@@ -49,7 +51,8 @@ func main() {
 
 		// process input
 
-		if strings.Compare(trimmedInput, "exit") == 0 {
+		ret := cmd.Execute(trimmedInput)
+		if ret == 1 {
 			break
 		}
 
