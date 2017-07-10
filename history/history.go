@@ -63,13 +63,11 @@ func Init(hList **list.List) {
 }
 
 // WriteHistory appends full command history to file
-// TODO: need to set a marker / pointer to the node
-// where history read from file into memory ends and
-// new command history for currents session starts
+// starting at the point defiend by the passed in parameter
 func WriteHistory(start *list.Element, hList **list.List) {
 
 	// format for history entry:
-	// <linenuber> <timestamp> <context> <data/command>
+	// <linenuber> <timestamp> <data/command> <context>
 
 	f, err := os.OpenFile(histFile, os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {

@@ -34,14 +34,6 @@ func main() {
 	history.Init(&hList)
 	hEnd := hList.Back()
 
-	// debug print history
-	//for e := hList.Front(); e.Next() != nil; e = e.Next() {
-	//	fmt.Println(e.Value)
-	//}
-
-	// proof of concept write for protobuf
-	// history.WriteHistory(&hList)
-
 	// main loop
 	consoleReader := bufio.NewReader(os.Stdin)
 
@@ -52,7 +44,6 @@ func main() {
 
 		// add to history
 		// TODO: need to calculate timestamp, and present working directory
-		// also need to obtain line number from list then increment by one
 		history.AddEntry(trimmedInput, "00:00:00", "/root/", &hList)
 
 		// process input
@@ -64,11 +55,12 @@ func main() {
 	}
 
 	// debug print history
-	for e := hList.Front(); e.Next() != nil; e = e.Next() {
-		fmt.Println(e.Value)
-	}
+	/*
+		for e := hList.Front(); e.Next() != nil; e = e.Next() {
+			fmt.Println(e.Value)
+		}
+	*/
 
-	// TODO: Don't want to append entire history list to file, need a marker
 	history.WriteHistory(hEnd, &hList)
 
 }
