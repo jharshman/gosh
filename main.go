@@ -32,14 +32,7 @@ func main() {
 	// history use container/list instead of array / slice
 	hList := list.New()
 	history.Init(&hList)
-
-	// debug print history
-	//for e := hList.Front(); e.Next() != nil; e = e.Next() {
-	//	fmt.Println(e.Value)
-	//}
-
-	// proof of concept write for protobuf
-	// history.WriteHistory(&hList)
+	hEnd := hList.Back()
 
 	// main loop
 	consoleReader := bufio.NewReader(os.Stdin)
@@ -49,13 +42,25 @@ func main() {
 		consoleInput, _ := consoleReader.ReadString('\n')
 		trimmedInput := strings.TrimSpace(consoleInput)
 
-		// process input
+		// add to history
+		// TODO: need to calculate timestamp, and present working directory
+		history.AddEntry(trimmedInput, "00:00:00", "/root/", &hList)
 
+		// process input
 		ret := cmd.Execute(trimmedInput)
 		if ret == 1 {
 			break
 		}
 
 	}
+
+	// debug print history
+	/*
+		for e := hList.Front(); e.Next() != nil; e = e.Next() {
+			fmt.Println(e.Value)
+		}
+	*/
+
+	history.WriteHistory(hEnd, &hList)
 
 }

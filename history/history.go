@@ -2,6 +2,7 @@ package history
 
 import (
 	"bufio"
+	"bytes"
 	"container/list"
 	"fmt"
 	"github.com/golang/protobuf/proto"
@@ -15,7 +16,7 @@ import (
 
 // Hist struct similar to GNU History Library
 type Hist struct {
-	lineNumber int32
+	lineNumber string
 	timeStamp  string
 	data       string
 	context    string
@@ -47,17 +48,10 @@ func Init(hList **list.List) {
 			splitEntry = strings.Fields(entry)
 
 			// construct struct
-			num, err := strconv.ParseUint(splitEntry[0], 10, 32)
-			if err != nil {
-				fmt.Println(xerrors.ErrInternal)
-				log.Fatalf("Failed parsing int: %v", err)
-			}
-
-			num32 := int32(num)
 			data := strings.Join(splitEntry[3:], " ")
 
 			hEntry := &Hist{}
-			hEntry.setLineNumber(num32)
+			hEntry.setLineNumber(splitEntry[0])
 			hEntry.setTimeStamp(splitEntry[1])
 			hEntry.setContext(splitEntry[2])
 			hEntry.setData(data)
@@ -68,8 +62,63 @@ func Init(hList **list.List) {
 	}
 }
 
-// WriteHistory ...
-func WriteHistory(hList **list.List) {
+// WriteHistory appends full command history to file
+// starting at the point defiend by the passed in parameter
+func WriteHistory(start *list.Element, hList **list.List) {
+
+	// format for history entry:
+	// <linenuber> <timestamp> <data/command> <context>
+
+	f, err := os.OpenFile(histFile, os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		fmt.Println(xerrors.ErrInternal)
+		log.Fatalf("Failed opening file for write: %v", err)
+	}
+
+	defer f.Close()
+
+	writer := bufio.NewWriter(f)
+	for e := start.Next(); e.Next() != nil; e = e.Next() {
+
+		line := simpleHistoryEntry(e.Value)
+
+		writer.WriteString(line)
+
+	}
+
+	writer.Flush()
+
+}
+
+// AddEntry creates a new Hist structure and pushes it onto the list
+func AddEntry(command string, timestamp string, context string, hList **list.List) {
+
+	listLength := strconv.Itoa((*hList).Len() + 1)
+
+	hEntry := &Hist{}
+	hEntry.setLineNumber(listLength)
+	hEntry.setTimeStamp(timestamp)
+	hEntry.setContext(context)
+	hEntry.setData(command)
+	_ = (*hList).PushBack(hEntry)
+}
+
+func simpleHistoryEntry(t interface{}) string {
+	var buf bytes.Buffer
+	buf.WriteString(t.(*Hist).GetLineNumber())
+	buf.WriteString(" ")
+	buf.WriteString(t.(*Hist).GetTimeStamp())
+	buf.WriteString(" ")
+	buf.WriteString(t.(*Hist).GetData())
+	buf.WriteString(" ")
+	buf.WriteString(t.(*Hist).GetContext())
+	buf.WriteString("\n")
+	return buf.String()
+}
+
+// WriteHistoryProtobuf ...
+// Testing practicality of writing history log in protobuffer
+func WriteHistoryProtobuf(hList **list.List) {
 
 	// write history file
 	var entryList []*HistoryEntry
@@ -108,7 +157,7 @@ func WriteHistory(hList **list.List) {
 /*
 *	accessor functions
  */
-func (h *Hist) setLineNumber(pLineNumber int32) {
+func (h *Hist) setLineNumber(pLineNumber string) {
 	h.lineNumber = pLineNumber
 }
 
@@ -125,7 +174,7 @@ func (h *Hist) setContext(pContext string) {
 }
 
 // GetLineNumber ...
-func (h *Hist) GetLineNumber() int32 {
+func (h *Hist) GetLineNumber() string {
 	return h.lineNumber
 }
 
