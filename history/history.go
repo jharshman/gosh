@@ -66,7 +66,7 @@ func Init(hList **list.List) {
 // TODO: need to set a marker / pointer to the node
 // where history read from file into memory ends and
 // new command history for currents session starts
-func WriteHisory(hList **list.List) {
+func WriteHistory(hList **list.List) {
 
 	// format for history entry:
 	// <linenuber> <timestamp> <context> <data/command>
@@ -87,6 +87,8 @@ func WriteHisory(hList **list.List) {
 		writer.WriteString(line)
 
 	}
+
+	writer.Flush()
 
 }
 
@@ -109,9 +111,10 @@ func simpleHistoryEntry(t interface{}) string {
 	buf.WriteString(" ")
 	buf.WriteString(t.(*Hist).GetTimeStamp())
 	buf.WriteString(" ")
-	buf.WriteString(t.(*Hist).GetContext())
-	buf.WriteString(" ")
 	buf.WriteString(t.(*Hist).GetData())
+	buf.WriteString(" ")
+	buf.WriteString(t.(*Hist).GetContext())
+	buf.WriteString("\n")
 	return buf.String()
 }
 
