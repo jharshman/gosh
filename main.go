@@ -49,13 +49,22 @@ func main() {
 		consoleInput, _ := consoleReader.ReadString('\n')
 		trimmedInput := strings.TrimSpace(consoleInput)
 
-		// process input
+		// add to history
+		// TODO: need to calculate timestamp, and present working directory
+		// also need to obtain line number from list then increment by one
+		history.AddEntry(trimmedInput, "00:00:00", "/root/", &hList)
 
+		// process input
 		ret := cmd.Execute(trimmedInput)
 		if ret == 1 {
 			break
 		}
 
+	}
+
+	// debug print history
+	for e := hList.Front(); e.Next() != nil; e = e.Next() {
+		fmt.Println(e.Value)
 	}
 
 }
