@@ -66,7 +66,7 @@ func Init(hList **list.List) {
 // TODO: need to set a marker / pointer to the node
 // where history read from file into memory ends and
 // new command history for currents session starts
-func WriteHistory(hList **list.List) {
+func WriteHistory(start *list.Element, hList **list.List) {
 
 	// format for history entry:
 	// <linenuber> <timestamp> <context> <data/command>
@@ -80,7 +80,7 @@ func WriteHistory(hList **list.List) {
 	defer f.Close()
 
 	writer := bufio.NewWriter(f)
-	for e := (*hList).Front(); e.Next() != nil; e = e.Next() {
+	for e := start.Next(); e.Next() != nil; e = e.Next() {
 
 		line := simpleHistoryEntry(e.Value)
 

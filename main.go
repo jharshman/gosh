@@ -32,6 +32,7 @@ func main() {
 	// history use container/list instead of array / slice
 	hList := list.New()
 	history.Init(&hList)
+	hEnd := hList.Back()
 
 	// debug print history
 	//for e := hList.Front(); e.Next() != nil; e = e.Next() {
@@ -67,6 +68,7 @@ func main() {
 		fmt.Println(e.Value)
 	}
 
-	history.WriteHistory(&hList)
+	// TODO: Don't want to append entire history list to file, need a marker
+	history.WriteHistory(hEnd, &hList)
 
 }
